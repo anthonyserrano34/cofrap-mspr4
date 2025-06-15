@@ -1,0 +1,22 @@
+version: 1.0
+provider:
+  name: openfaas
+  gateway: http://127.0.0.1:8080
+
+functions:
+  health:
+    lang: python3-http
+    handler: ./health
+    image: cofrap/health:latest
+    environment:
+      # No environment variables needed for health check
+    labels:
+      com.openfaas.scale.min: 1
+      com.openfaas.scale.max: 5
+      com.openfaas.scale.target: 95
+      com.openfaas.scale.target-proportion: 0.9
+    annotations:
+      topic: "cofrap.system.health"
+      description: "Health check endpoint for COFRAP Authentication System"
+    constraints:
+      - "node.platform.os == linux" 

@@ -148,16 +148,19 @@ export default function Generate2FAPage() {
 										Code QR TOTP
 									</h4>
 									<div className="bg-white p-6 border inline-block">
-										<img
-											src={
-												result.qrCode ||
-												"/placeholder.svg"
-											}
-											alt="QR Code TOTP"
-											className="mx-auto"
-											width={200}
-											height={200}
-										/>
+										{result.qrCode ? (
+											<img
+												src={result.qrCode}
+												alt="QR Code TOTP"
+												className="mx-auto"
+												width={200}
+												height={200}
+											/>
+										) : (
+											<div className="w-[200px] h-[200px] bg-gray-100 flex items-center justify-center mx-auto">
+												<span className="text-gray-400 text-sm">QR Code indisponible</span>
+											</div>
+										)}
 									</div>
 									<p className="text-sm text-gray-600 mt-3">
 										Scannez ce code avec Google

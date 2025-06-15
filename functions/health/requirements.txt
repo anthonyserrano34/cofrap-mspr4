@@ -1,0 +1,2 @@
+# Requirements for health check function
+# Minimal dependencies - no database or crypto needed for basic health check 

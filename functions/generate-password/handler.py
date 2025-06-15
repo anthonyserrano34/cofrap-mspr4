@@ -55,12 +55,21 @@ def handle(req):
                 "MISSING_REQUEST_BODY"
             ))
         
-        try:
-            request_data = json.loads(req)
-        except json.JSONDecodeError:
+        # Handle both string
+        if isinstance(req, str):
+            try:
+                request_data = json.loads(req)
+            except json.JSONDecodeError:
+                return json.dumps(ResponseUtils.error_response(
+                    "Invalid JSON format", 
+                    "INVALID_JSON"
+                ))
+        elif isinstance(req, dict):
+            request_data = req
+        else:
             return json.dumps(ResponseUtils.error_response(
-                "Invalid JSON format", 
-                "INVALID_JSON"
+                "Invalid request format", 
+                "INVALID_REQUEST_FORMAT"
             ))
         
         # Validate required fields

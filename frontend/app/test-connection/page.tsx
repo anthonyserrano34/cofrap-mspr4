@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { FrenchHeader } from "@/components/ui/french-header";
 import { GovernmentBreadcrumb } from "@/components/ui/government-breadcrumb";
 import { GovernmentForm } from "@/components/ui/government-form";
-import { checkConnection } from "@/lib/cofrap-api";
+import { getSystemHealth } from "@/lib/cofrap-api";
 import { API_ENDPOINTS } from "@/lib/api-config";
 
 export default function TestConnectionPage() {
@@ -14,19 +14,34 @@ export default function TestConnectionPage() {
 		connected: boolean;
 		gateway: string;
 		message: string;
+		health_data?: any;
 	} | null>(null);
 	const [loading, setLoading] = useState(false);
 
 	const testConnection = async () => {
 		setLoading(true);
 		try {
-			const result = await checkConnection();
-			setConnection(result);
+			const result = await getSystemHealth();
+			
+			if (result.success && result.health_data) {
+				setConnection({
+					connected: true,
+					gateway: API_ENDPOINTS.health.split("/function/")[0],
+					message: `Connecté à ${result.health_data.service || 'OpenFaaS'} v${result.health_data.version || '1.0'}`,
+					health_data: result.health_data
+				});
+			} else {
+				setConnection({
+					connected: false,
+					gateway: API_ENDPOINTS.health.split("/function/")[0],
+					message: result.message || "Fonction health inaccessible"
+				});
+			}
 		} catch (error) {
 			setConnection({
 				connected: false,
-				gateway: API_ENDPOINTS.generatePassword.split("/function/")[0],
-				message: "Erreur lors du test de connectivité",
+				gateway: API_ENDPOINTS.health.split("/function/")[0],
+				message: "Erreur lors du test de connectivité avec /health",
 			});
 		} finally {
 			setLoading(false);
@@ -47,6 +62,7 @@ export default function TestConnectionPage() {
 					<h1 className="text-3xl font-bold text-[#1D2D50] mb-2">
 						Test de connectivité OpenFaaS
 					</h1>
+					<p className="text-gray-600 mb-4">Via la fonction /health</p>
 					<div className="w-16 h-0.5 bg-red-600 mx-auto"></div>
 				</div>
 
@@ -66,31 +82,43 @@ export default function TestConnectionPage() {
 									<strong>Gateway OpenFaaS:</strong>
 									<span className="ml-2 font-mono text-blue-600">
 										{
-											API_ENDPOINTS.generatePassword.split(
+											API_ENDPOINTS.health.split(
 												"/function/"
 											)[0]
 										}
 									</span>
 								</div>
 								<div>
-									<strong>Endpoints:</strong>
+									<strong>Test principal:</strong>
 								</div>
 								<ul className="ml-4 space-y-1">
 									<li>
 										•{" "}
-										<span className="font-mono text-xs">
+										<span className="font-mono text-xs text-purple-600 font-semibold">
+											{API_ENDPOINTS.health}
+										</span>
+										<span className="ml-2 text-xs text-gray-600">(Diagnostic système)</span>
+									</li>
+								</ul>
+								<div className="mt-2">
+									<strong>Autres endpoints disponibles:</strong>
+								</div>
+								<ul className="ml-4 space-y-1">
+									<li>
+										•{" "}
+										<span className="font-mono text-xs text-gray-500">
 											{API_ENDPOINTS.generatePassword}
 										</span>
 									</li>
 									<li>
 										•{" "}
-										<span className="font-mono text-xs">
+										<span className="font-mono text-xs text-gray-500">
 											{API_ENDPOINTS.generate2FA}
 										</span>
 									</li>
 									<li>
 										•{" "}
-										<span className="font-mono text-xs">
+										<span className="font-mono text-xs text-gray-500">
 											{API_ENDPOINTS.authenticate}
 										</span>
 									</li>
@@ -113,7 +141,7 @@ export default function TestConnectionPage() {
 									) : (
 										<XCircle className="h-5 w-5 text-red-600 mt-0.5 mr-3 flex-shrink-0" />
 									)}
-									<div>
+									<div className="flex-1">
 										<h4
 											className={`font-semibold mb-1 ${
 												connection.connected
@@ -134,10 +162,31 @@ export default function TestConnectionPage() {
 										>
 											{connection.message}
 										</p>
+										
+										{/* Affichage des données de santé si disponibles */}
+										{connection.health_data && (
+											<div className="mt-3 text-xs bg-white bg-opacity-50 p-2 rounded">
+												<div className="font-semibold mb-1">Informations système :</div>
+												<div>Service : {connection.health_data.service}</div>
+												<div>Version : {connection.health_data.version}</div>
+												<div>Status : {connection.health_data.status}</div>
+												{connection.health_data.components && (
+													<div className="mt-1">
+														<div className="font-medium">Composants :</div>
+														{Object.entries(connection.health_data.components).map(([key, value]) => (
+															<div key={key} className="ml-2">
+																{key}: {value as string}
+															</div>
+														))}
+													</div>
+												)}
+											</div>
+										)}
 									</div>
 								</div>
 							</div>
 						)}
+
 
 						{/* Instructions */}
 						<div className="bg-blue-50 p-4 border-l-4 border-blue-400">
@@ -155,16 +204,16 @@ export default function TestConnectionPage() {
 										</p>
 										<ol className="list-decimal list-inside space-y-1 ml-2">
 											<li>
-												Vérifiez que OpenFaaS est
-												démarré
+												Vérifiez que OpenFaaS est démarré
 											</li>
 											<li>
-												Vérifiez que le port 8080 est
-												accessible
+												Vérifiez que la fonction <code>/health</code> est déployée
 											</li>
 											<li>
-												Modifiez l'URL dans le fichier{" "}
-												<code>.env.local</code>
+												Vérifiez que le port 8080 est accessible
+											</li>
+											<li>
+												Modifiez l'URL dans le fichier <code>.env.local</code>
 											</li>
 										</ol>
 
@@ -175,14 +224,13 @@ export default function TestConnectionPage() {
 										</p>
 										<ol className="list-decimal list-inside space-y-1 ml-2">
 											<li>
-												Demandez l'IP de l'instance
-												OpenFaaS
+												Déployez d'abord la fonction health : <code>faas-cli deploy -f health/health.yml</code>
 											</li>
 											<li>
-												Modifiez{" "}
-												<code>
-													NEXT_PUBLIC_OPENFAAS_GATEWAY=http://IP_OPENFAAS:8080
-												</code>
+												Demandez l'IP de l'instance OpenFaaS
+											</li>
+											<li>
+												Modifiez <code>NEXT_PUBLIC_OPENFAAS_GATEWAY=http://IP_OPENFAAS:8080</code>
 											</li>
 											<li>
 												Relancez le test de connectivité
@@ -203,12 +251,12 @@ export default function TestConnectionPage() {
 								{loading ? (
 									<>
 										<RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-										Test en cours...
+										Test via /health en cours...
 									</>
 								) : (
 									<>
 										<RefreshCw className="h-4 w-4 mr-2" />
-										Retester la connexion
+										Tester via /health
 									</>
 								)}
 							</Button>

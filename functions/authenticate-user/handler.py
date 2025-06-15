@@ -47,19 +47,28 @@ def handle(req):
         str: JSON response with authentication result
     """
     try:
-        # Parse input
+        # Parse input - handle both string and dict formats
         if not req:
             return json.dumps(ResponseUtils.error_response(
                 "Request body is required", 
                 "MISSING_REQUEST_BODY"
             ))
         
-        try:
-            request_data = json.loads(req)
-        except json.JSONDecodeError:
+        # Handle both string (raw JSON) and dict (already parsed) inputs
+        if isinstance(req, str):
+            try:
+                request_data = json.loads(req)
+            except json.JSONDecodeError:
+                return json.dumps(ResponseUtils.error_response(
+                    "Invalid JSON format", 
+                    "INVALID_JSON"
+                ))
+        elif isinstance(req, dict):
+            request_data = req
+        else:
             return json.dumps(ResponseUtils.error_response(
-                "Invalid JSON format", 
-                "INVALID_JSON"
+                "Invalid request format", 
+                "INVALID_REQUEST_FORMAT"
             ))
         
         # Validate required fields
