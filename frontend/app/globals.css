@@ -1,0 +1,219 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+	:root {
+		--background: 0 0% 100%;
+		--foreground: 222.2 84% 4.9%;
+		--card: 0 0% 100%;
+		--card-foreground: 222.2 84% 4.9%;
+		--popover: 0 0% 100%;
+		--popover-foreground: 222.2 84% 4.9%;
+		--primary: 210 40% 21%;
+		--primary-foreground: 210 40% 98%;
+		--secondary: 210 40% 96%;
+		--secondary-foreground: 222.2 84% 4.9%;
+		--muted: 210 40% 96%;
+		--muted-foreground: 215.4 16.3% 46.9%;
+		--accent: 210 40% 96%;
+		--accent-foreground: 222.2 84% 4.9%;
+		--destructive: 0 72% 51%;
+		--destructive-foreground: 210 40% 98%;
+		--border: 214.3 31.8% 91.4%;
+		--input: 214.3 31.8% 91.4%;
+		--ring: 210 40% 21%;
+		--radius: 0rem;
+	}
+}
+
+@layer base {
+	* {
+		@apply border-border;
+	}
+
+	body {
+		@apply bg-background text-foreground;
+		font-feature-settings: "rlig" 1, "calt" 1;
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+	}
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-weight: 600;
+	letter-spacing: -0.025em;
+}
+
+.government-form input {
+	border-radius: 0;
+	border-width: 2px;
+}
+
+.government-form input:focus {
+	border-color: #1d2d50;
+	box-shadow: 0 0 0 3px rgba(29, 45, 80, 0.1);
+}
+
+.french-tricolor {
+	background: linear-gradient(to right, #1d2d50 33.33%, #ffffff 33.33%, #ffffff 66.66%, #dc2626 66.66%);
+}
+
+.government-card {
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.government-card:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.btn-government {
+	border-radius: 0;
+	font-weight: 600;
+	text-transform: none;
+	letter-spacing: 0.025em;
+}
+
+.sr-only {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+
+*:focus-visible {
+	outline: 2px solid #1d2d50;
+	outline-offset: 2px;
+}
+
+.government-gradient {
+	background: linear-gradient(135deg, #1d2d50 0%, #2a3f66 50%, #1d2d50 100%);
+}
+
+.french-flag-enhanced {
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.government-title {
+	font-weight: 700;
+	letter-spacing: -0.02em;
+	line-height: 1.2;
+}
+
+.government-subtitle {
+	font-weight: 500;
+	letter-spacing: 0.01em;
+	line-height: 1.4;
+}
+
+.government-card-enhanced {
+	transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.government-card-enhanced:hover {
+	transform: translateY(-4px) scale(1.02);
+	box-shadow: 0 20px 40px rgba(29, 45, 80, 0.15);
+}
+
+.government-form-enhanced input {
+	transition: all 0.3s ease;
+	border-width: 2px;
+}
+
+.government-form-enhanced input:focus {
+	border-color: #1d2d50;
+	box-shadow: 0 0 0 4px rgba(29, 45, 80, 0.1);
+	transform: scale(1.01);
+}
+
+.btn-government-enhanced {
+	position: relative;
+	overflow: hidden;
+	transition: all 0.3s ease;
+}
+
+.btn-government-enhanced:hover {
+	transform: translateY(-1px);
+	box-shadow: 0 8px 20px rgba(29, 45, 80, 0.3);
+}
+
+.btn-government-enhanced::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: -100%;
+	width: 100%;
+	height: 100%;
+	background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+	transition: left 0.5s;
+}
+
+.btn-government-enhanced:hover::before {
+	left: 100%;
+}
+
+.focus-enhanced:focus-visible {
+	outline: 3px solid #1d2d50;
+	outline-offset: 3px;
+	border-radius: 2px;
+}
+
+@media (max-width: 768px) {
+	.government-card-enhanced {
+		transform: none;
+	}
+
+	.government-card-enhanced:hover {
+		transform: translateY(-2px);
+	}
+}
+
+.loading-enhanced {
+	position: relative;
+}
+
+.loading-enhanced::after {
+	content: "";
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 20px;
+	height: 20px;
+	margin: -10px 0 0 -10px;
+	border: 2px solid #ffffff;
+	border-top: 2px solid transparent;
+	border-radius: 50%;
+	animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+	0% {
+		transform: rotate(0deg);
+	}
+
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+.status-success {
+	background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.status-warning {
+	background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.status-error {
+	background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
