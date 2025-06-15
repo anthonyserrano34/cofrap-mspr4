@@ -2,13 +2,13 @@
 
 import type React from "react";
 import { useState } from "react";
-import { UserPlus, CheckCircle, AlertCircle } from "lucide-react";
+import { UserPlus, CheckCircle, AlertCircle, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FrenchHeader } from "@/components/ui/french-header";
 import { GovernmentBreadcrumb } from "@/components/ui/government-breadcrumb";
 import { GovernmentForm } from "@/components/ui/government-form";
-import { mockCreateAccount } from "@/lib/mock-api";
+import { createAccount } from "@/lib/cofrap-api";
 
 export default function CreateAccountPage() {
 	const [username, setUsername] = useState("");
@@ -28,7 +28,7 @@ export default function CreateAccountPage() {
 		console.log("🔄 Appel API - Création de compte:", { username });
 
 		try {
-			const response = await mockCreateAccount(username);
+			const response = await createAccount(username);
 			setResult(response);
 			console.log("✅ Réponse API:", response);
 		} catch (error) {
@@ -60,7 +60,7 @@ export default function CreateAccountPage() {
 					<div className="w-16 h-0.5 bg-red-600 mx-auto"></div>
 				</div>
 
-				{!result ? (
+				{!result || (result && !result.success) ? (
 					<GovernmentForm
 						title="Nouveau Compte Utilisateur"
 						description="Saisissez un nom d'utilisateur pour générer automatiquement un mot de passe sécurisé conforme aux standards de sécurité."
@@ -102,6 +102,23 @@ export default function CreateAccountPage() {
 									: "Créer le compte"}
 							</Button>
 						</form>
+
+						{result && !result.success && (
+							<div className="mt-6 bg-red-50 p-4 border-l-4 border-red-400">
+								<div className="flex items-start">
+									<XCircle className="h-5 w-5 text-red-600 mt-0.5 mr-3 flex-shrink-0" />
+									<div>
+										<h4 className="font-semibold text-red-800 mb-1">
+											Erreur de création de compte
+										</h4>
+										<p className="text-sm text-red-700">
+											{result.message ||
+												"Une erreur s'est produite lors de la création du compte."}
+										</p>
+									</div>
+								</div>
+							</div>
+						)}
 					</GovernmentForm>
 				) : (
 					<GovernmentForm

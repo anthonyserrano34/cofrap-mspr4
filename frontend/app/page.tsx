@@ -1,4 +1,4 @@
-import { Shield, UserPlus, Smartphone, LogIn, Building2 } from "lucide-react";
+import { UserPlus, Smartphone, LogIn, Building2, Wifi } from "lucide-react";
 import { FrenchHeader } from "@/components/ui/french-header";
 import { GovernmentCard } from "@/components/ui/government-card";
 
@@ -73,6 +73,33 @@ export default function HomePage() {
 						number="03"
 						badge="Multi-facteurs"
 					/>
+				</div>
+
+				{/* Test de connectivité */}
+				<div className="text-center">
+					<div className="max-w-md mx-auto">
+						<div className="bg-white border-l-4 border-[#1D2D50] p-4 shadow-sm">
+							<div className="flex items-center">
+								<div className="bg-[#1D2D50] p-2 mr-3">
+									<Wifi className="h-4 w-4 text-white" />
+								</div>
+								<div className="text-left">
+									<h4 className="text-sm font-semibold text-[#1D2D50]">
+										Test de Connectivité
+									</h4>
+									<p className="text-xs text-gray-600">
+										Vérifiez la connexion aux services OpenFaaS
+									</p>
+								</div>
+								<a 
+									href="/test-connection"
+									className="ml-auto text-red-600 hover:text-red-700 text-sm font-medium"
+								>
+									Tester →
+								</a>
+							</div>
+						</div>
+					</div>
 				</div>
 
 				{/* Information */}

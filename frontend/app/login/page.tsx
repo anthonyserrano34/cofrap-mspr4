@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { FrenchHeader } from "@/components/ui/french-header";
 import { GovernmentBreadcrumb } from "@/components/ui/government-breadcrumb";
 import { GovernmentForm } from "@/components/ui/government-form";
-import { mockLogin } from "@/lib/mock-api";
+import { authenticate } from "@/lib/cofrap-api";
 
 export default function LoginPage() {
 	const [formData, setFormData] = useState({
@@ -40,8 +40,12 @@ export default function LoginPage() {
 		console.log("🔄 Appel API - Connexion:", formData);
 
 		try {
-			const response = await mockLogin(formData);
-			setResult(response);
+			const response = await authenticate(formData);
+			setResult({
+				success: response.success && response.authenticated === true,
+				message: response.message || "",
+				expired: response.expired,
+			});
 			console.log("✅ Réponse API:", response);
 		} catch (error) {
 			console.error("❌ Erreur API:", error);
@@ -72,7 +76,7 @@ export default function LoginPage() {
 					<div className="w-16 h-0.5 bg-red-600 mx-auto"></div>
 				</div>
 
-				{!result ? (
+				{!result || (result && !result.success && !result.expired) ? (
 					<GovernmentForm
 						title="Connexion Sécurisée"
 						description="Authentifiez-vous avec vos identifiants et votre code d'authentification à deux facteurs."
@@ -173,6 +177,23 @@ export default function LoginPage() {
 									: "Se connecter"}
 							</Button>
 						</form>
+
+						{result && !result.success && !result.expired && (
+							<div className="mt-6 bg-red-50 p-4 border-l-4 border-red-400">
+								<div className="flex items-start">
+									<XCircle className="h-5 w-5 text-red-600 mt-0.5 mr-3 flex-shrink-0" />
+									<div>
+										<h4 className="font-semibold text-red-800 mb-1">
+											Erreur d'authentification
+										</h4>
+										<p className="text-sm text-red-700">
+											{result.message ||
+												"Vérifiez vos identifiants et réessayez."}
+										</p>
+									</div>
+								</div>
+							</div>
+						)}
 					</GovernmentForm>
 				) : (
 					<GovernmentForm
