@@ -1,0 +1,30 @@
+version: 1.0
+provider:
+  name: openfaas
+  gateway: http://127.0.0.1:8080
+
+functions:
+  generate-2fa:
+    lang: python3-http
+    handler: ./generate-2fa
+    image: cofrap/generate-2fa:latest
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: cofrap_auth
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      ENCRYPTION_KEY: ""
+    secrets:
+      - db-password
+      - encryption-key
+    labels:
+      com.openfaas.scale.min: 1
+      com.openfaas.scale.max: 10
+      com.openfaas.scale.target: 80
+      com.openfaas.scale.target-proportion: 0.7
+    annotations:
+      topic: "cofrap.auth.2fa"
+      description: "Generate TOTP secrets with QR codes for COFRAP 2FA authentication"
+    constraints:
+      - "node.platform.os == linux" 

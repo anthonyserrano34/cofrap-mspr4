@@ -1,0 +1,30 @@
+version: 1.0
+provider:
+  name: openfaas
+  gateway: http://127.0.0.1:8080
+
+functions:
+  authenticate-user:
+    lang: python3-http
+    handler: ./authenticate-user
+    image: cofrap/authenticate-user:latest
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: cofrap_auth
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      ENCRYPTION_KEY: ""
+    secrets:
+      - db-password
+      - encryption-key
+    labels:
+      com.openfaas.scale.min: 1
+      com.openfaas.scale.max: 15
+      com.openfaas.scale.target: 70
+      com.openfaas.scale.target-proportion: 0.8
+    annotations:
+      topic: "cofrap.auth.authenticate"
+      description: "Authenticate users with password and TOTP, checking for expiration"
+    constraints:
+      - "node.platform.os == linux" 
