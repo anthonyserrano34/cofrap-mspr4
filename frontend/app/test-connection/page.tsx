@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { CheckCircle, XCircle, AlertCircle, RefreshCw } from "lucide-react";
+import { CheckCircle, XCircle, AlertCircle, RefreshCw, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FrenchHeader } from "@/components/ui/french-header";
 import { GovernmentBreadcrumb } from "@/components/ui/government-breadcrumb";
@@ -17,6 +17,7 @@ export default function TestConnectionPage() {
 		health_data?: any;
 	} | null>(null);
 	const [loading, setLoading] = useState(false);
+	const [showInstructions, setShowInstructions] = useState(false);
 
 	const testConnection = async () => {
 		setLoading(true);
@@ -192,51 +193,64 @@ export default function TestConnectionPage() {
 						<div className="bg-blue-50 p-4 border-l-4 border-blue-400">
 							<div className="flex items-start">
 								<AlertCircle className="h-5 w-5 text-blue-600 mt-0.5 mr-3 flex-shrink-0" />
-								<div>
-									<h4 className="font-semibold text-blue-800 mb-2">
-										Instructions
-									</h4>
-									<div className="text-sm text-blue-700 space-y-2">
-										<p>
-											<strong>
-												Si la connexion échoue :
-											</strong>
-										</p>
-										<ol className="list-decimal list-inside space-y-1 ml-2">
-											<li>
-												Vérifiez que OpenFaaS est démarré
-											</li>
-											<li>
-												Vérifiez que la fonction <code>/health</code> est déployée
-											</li>
-											<li>
-												Vérifiez que le port 8080 est accessible
-											</li>
-											<li>
-												Modifiez l'URL dans le fichier <code>.env.local</code>
-											</li>
-										</ol>
+								<div className="flex-1">
+									<button
+										onClick={() => setShowInstructions(!showInstructions)}
+										className="flex items-center justify-between w-full text-left"
+									>
+										<h4 className="font-semibold text-blue-800">
+											Instructions
+										</h4>
+										{showInstructions ? (
+											<ChevronUp className="h-4 w-4 text-blue-600" />
+										) : (
+											<ChevronDown className="h-4 w-4 text-blue-600" />
+										)}
+									</button>
+									
+									{showInstructions && (
+										<div className="mt-3 text-sm text-blue-700 space-y-2">
+											<p>
+												<strong>
+													Si la connexion échoue :
+												</strong>
+											</p>
+											<ol className="list-decimal list-inside space-y-1 ml-2">
+												<li>
+													Vérifiez que OpenFaaS est démarré
+												</li>
+												<li>
+													Vérifiez que la fonction <code>/health</code> est déployée
+												</li>
+												<li>
+													Vérifiez que le port 8080 est accessible
+												</li>
+												<li>
+													Modifiez l'URL dans le fichier <code>.env.local</code>
+												</li>
+											</ol>
 
-										<p className="mt-3">
-											<strong>
-												Pour l'intégration :
-											</strong>
-										</p>
-										<ol className="list-decimal list-inside space-y-1 ml-2">
-											<li>
-												Déployez d'abord la fonction health : <code>faas-cli deploy -f health/health.yml</code>
-											</li>
-											<li>
-												Demandez l'IP de l'instance OpenFaaS
-											</li>
-											<li>
-												Modifiez <code>NEXT_PUBLIC_OPENFAAS_GATEWAY=http://IP_OPENFAAS:8080</code>
-											</li>
-											<li>
-												Relancez le test de connectivité
-											</li>
-										</ol>
-									</div>
+											<p className="mt-3">
+												<strong>
+													Pour l'intégration :
+												</strong>
+											</p>
+											<ol className="list-decimal list-inside space-y-1 ml-2">
+												<li>
+													Déployez d'abord la fonction health : <code>faas-cli deploy -f health/health.yml</code>
+												</li>
+												<li>
+													Demandez l'IP de l'instance OpenFaaS
+												</li>
+												<li>
+													Modifiez <code>NEXT_PUBLIC_OPENFAAS_GATEWAY=http://IP_OPENFAAS:8080</code>
+												</li>
+												<li>
+													Relancez le test de connectivité
+												</li>
+											</ol>
+										</div>
+									)}
 								</div>
 							</div>
 						</div>

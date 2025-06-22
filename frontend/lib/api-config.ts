@@ -1,13 +1,34 @@
 /**
  * Configuration API pour le système COFRAP
- * Endpoints OpenFaaS pour les fonctions d'authentification
+ * 
+ * IMPORTANT: Ce projet a été migré d'OpenFaaS vers NextJS API Routes
+ * 
+ * Architecture originale: Fonctions serverless OpenFaaS
+ * Architecture actuelle: NextJS API Routes internes
+ * 
+ * Cette migration permet de faire une démo technique sans déployer OpenFaaS,
+ * tout en conservant exactement la même logique métier et les mêmes interfaces.
+ * 
+ * Variables d'environnement:
+ * - NEXT_PUBLIC_USE_NEXTJS_API=true (défaut) : Utilise les API Routes NextJS
+ * - NEXT_PUBLIC_USE_NEXTJS_API=false : Utilise les fonctions OpenFaaS
+ * - NEXT_PUBLIC_BASE_URL : URL de base pour NextJS (vide par défaut)
+ * - NEXT_PUBLIC_OPENFAAS_GATEWAY : Gateway OpenFaaS (fallback)
  */
 
 // Configuration de l'environnement
+// Mode NextJS API Routes (remplace OpenFaaS pour la démo)
+const USE_NEXTJS_API = process.env.NEXT_PUBLIC_USE_NEXTJS_API !== 'false'; // true par défaut
 const OPENFAAS_GATEWAY = process.env.NEXT_PUBLIC_OPENFAAS_GATEWAY || 'http://localhost:8080';
+const NEXTJS_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || '';
 
-// Endpoints des fonctions OpenFaaS
-export const API_ENDPOINTS = {
+// Endpoints - NextJS API Routes ou OpenFaaS selon la configuration
+export const API_ENDPOINTS = USE_NEXTJS_API ? {
+  generatePassword: `${NEXTJS_BASE_URL}/api/generate-password`,
+  generate2FA: `${NEXTJS_BASE_URL}/api/generate-2fa`,
+  authenticate: `${NEXTJS_BASE_URL}/api/authenticate-user`,
+  health: `${NEXTJS_BASE_URL}/api/health`
+} : {
   generatePassword: `${OPENFAAS_GATEWAY}/function/generate-password`,
   generate2FA: `${OPENFAAS_GATEWAY}/function/generate-2fa`,
   authenticate: `${OPENFAAS_GATEWAY}/function/authenticate-user`,
